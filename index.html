@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung Cancer Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h1 {
+            color: darkred;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        #result {
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lung Cancer Prediction Form</h1>
+    
+    <form id="patientForm">
+        <!-- Match these input names to FastAPI fields -->
+        <label>Age:</label><br>
+        <input type="number" id="age" required><br>
+
+        <label>Gender (1 = Male, 0 = Female):</label><br>
+        <input type="number" id="gender" required><br>
+
+        <label>Smoking (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="smoking" required><br>
+
+        <label>Finger Discoloration (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="finger_discoloration" required><br>
+
+        <label>Mental Stress (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="mental_stress" required><br>
+
+        <label>Exposure to Pollution (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="exposure_to_pollution" required><br>
+
+        <label>Long Term Illness (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="long_term_illness" required><br>
+
+        <label>Energy Level (1 = Low, 2 = Medium, 3 = High):</label><br>
+        <input type="number" id="energy_level" required><br>
+
+        <label>Immune Weakness (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="immune_weakness" required><br>
+
+        <label>Breathing Issue (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="breathing_issue" required><br>
+
+        <label>Alcohol Consumption (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="alcohol_consumption" required><br>
+
+        <label>Throat Discomfort (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="throat_discomfort" required><br>
+
+        <label>Oxygen Saturation (%):</label><br>
+        <input type="number" step="0.1" id="oxygen_saturation" required><br>
+
+        <label>Chest Tightness (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="chest_tightness" required><br>
+
+        <label>Family History of Cancer (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="family_history" required><br>
+
+        <label>Family History of Smoking (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="smoking_family_history" required><br>
+
+        <label>Stress & Immune Weakness (1 = Yes, 0 = No):</label><br>
+        <input type="number" id="stress_immune" required><br><br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        document.getElementById("patientForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const data = {
+                age: +document.getElementById("age").value,
+                gender: +document.getElementById("gender").value,
+                smoking: +document.getElementById("smoking").value,
+                finger_discoloration: +document.getElementById("finger_discoloration").value,
+                mental_stress: +document.getElementById("mental_stress").value,
+                exposure_to_pollution: +document.getElementById("exposure_to_pollution").value,
+                long_term_illness: +document.getElementById("long_term_illness").value,
+                energy_level: +document.getElementById("energy_level").value,
+                immune_weakness: +document.getElementById("immune_weakness").value,
+                breathing_issue: +document.getElementById("breathing_issue").value,
+                alcohol_consumption: +document.getElementById("alcohol_consumption").value,
+                throat_discomfort: +document.getElementById("throat_discomfort").value,
+                oxygen_saturation: +document.getElementById("oxygen_saturation").value,
+                chest_tightness: +document.getElementById("chest_tightness").value,
+                family_history: +document.getElementById("family_history").value,
+                smoking_family_history: +document.getElementById("smoking_family_history").value,
+                stress_immune: +document.getElementById("stress_immune").value
+            };
+
+            fetch("http://127.0.0.1:8000/predict", {
+
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultEl = document.getElementById("result");
+                resultEl.className = "";
+                if (data.prediction === "Yes") {
+                    resultEl.textContent = "⚠️ High Risk Detected: Cancer Possible";
+                    resultEl.classList.add("error");
+                } else {
+                    resultEl.textContent = "✅ No Signs of Lung Cancer Detected";
+                    resultEl.classList.add("success");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("result").textContent = "Error contacting server.";
+                document.getElementById("result").classList.add("error");
+            });
+        });
+    </script>
+</body>
+</html>
